@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/google/go-github/github"
+	"github.com/kr/pretty"
 	"github.com/spf13/afero"
 	"github.com/spf13/afero/mem"
 	"golang.org/x/oauth2"
@@ -50,7 +52,7 @@ func createFile(name string) *mem.File {
 	return file
 }
 
-func newGitHubFs(client *github.Client, user string, repo string, branch string) (afero.Fs, error) {
+func newGithubfs(client *github.Client, user string, repo string, branch string) (afero.Fs, error) {
 	ghfs := &githubFs{
 		client: client,
 		user:   user,
@@ -62,21 +64,24 @@ func newGitHubFs(client *github.Client, user string, repo string, branch string)
 	if err != nil {
 		return nil, err
 	}
-	//treeHash := b.Commit.Commit.Tree.GetSHA()
-	err = ghfs.updateTree(b.Commit.Commit.Tree.GetSHA())
+	treeHash := b.Commit.Commit.Tree.GetSHA()
+	ghfs.tree, _, _ = client.Git.GetTree(ctx, user, repo, treeHash, true)
 	if err != nil {
 		return nil, err
 	}
-	//fmt.Printf("%# v", pretty.Formatter(ghfs.tree))
+
 	return ghfs, nil
+}
+
+func (fs *githubFs) updateTree(sha string) (err error) {
+	_, _, err = fs.client.Git.GetTree(context.TODO(), fs.user, fs.repo, sha, true)
+	return err
 }
 
 // Open opens a file, returning it or an error, if any happens.
 func (fs *githubFs) Open(name string) (afero.File, error) {
-	fs.mu.Lock()
-	defer fs.mu.Unlock()
 	normalName := strings.TrimPrefix(name, "/")
-	var entry *github.TreeEntry
+	entry := fs.findEntry(name)
 
 	for _, e := range fs.tree.Entries {
 		if e.GetPath() == normalName {
@@ -88,25 +93,24 @@ func (fs *githubFs) Open(name string) (afero.File, error) {
 		return nil, afero.ErrFileNotFound
 	}
 	if entry.GetType() == "blob" {
-		fd := mem.CreateFile(name)
+		fd := mem.CreateFile(normalName)
 		mem.SetMode(fd, os.FileMode(int(0644)))
 		f := mem.NewFileHandle(fd)
 		blob, _, err := fs.client.Git.GetBlob(context.TODO(), fs.user, fs.repo, entry.GetSHA())
 		if err != nil {
 			return nil, err
 		}
-
 		b, _ := base64.StdEncoding.DecodeString(blob.GetContent())
 		f.Write(b)
 		f.Seek(0, 0)
 		return f, nil
 	}
+
 	dir := mem.CreateDir(name)
 	if normalName == "" {
 		normalName = "."
 	}
 	for _, e := range fs.tree.Entries {
-		//fmt.Println(path.Dir(e.GetPath()))
 		if path.Dir(e.GetPath()) != normalName {
 			continue
 		}
@@ -129,9 +133,26 @@ func (fs *githubFs) Open(name string) (afero.File, error) {
 	return mem.NewFileHandle(dir), nil
 }
 
-func (fs *githubFs) updateTree(sha string) (err error) {
-	_, _, err = fs.client.Git.GetTree(context.TODO(), fs.user, fs.repo, sha, true)
-	return err
+// Remove removes a file identified by name, returning an error, if any
+// happens.
+func (fs *githubFs) Remove(name string) error {
+	fs.mu.Lock()
+	defer fs.mu.Unlock()
+	normalName := strings.TrimPrefix(name, "/")
+	entry := fs.findEntry(name)
+	if entry == nil {
+		return afero.ErrFileNotFound
+	}
+	resp, _, err := fs.client.Repositories.DeleteFile(context.TODO(), fs.user, fs.repo, normalName, &github.RepositoryContentFileOptions{
+		Message: convstring(commitMessage),
+		SHA:     convstring(entry.GetSHA()),
+		Branch:  convstring(fs.branch),
+	})
+	if err != nil {
+		return err
+	}
+
+	return fs.updateTree(resp.Tree.GetSHA())
 }
 
 func (fs *githubFs) Create(name string) (afero.File, error) {
@@ -168,26 +189,6 @@ func (fs *githubFs) OpenFile(name string, flag int, perm os.FileMode) (afero.Fil
 	return nil, nil
 }
 
-// Remove removes a file identified by name, returning an error, if any
-// happens.
-func (fs *githubFs) Remove(name string) error {
-	normalName := strings.TrimPrefix(name, "/")
-	entry := fs.findEntry(name)
-	if entry == nil {
-		return afero.ErrFileNotFound
-	}
-	resp, _, err := fs.client.Repositories.DeleteFile(context.TODO(), fs.user, fs.repo, normalName, &github.RepositoryContentFileOptions{
-		Message: convstring(commitMessage),
-		SHA:     convstring(entry.GetSHA()),
-		Branch:  convstring(fs.branch),
-	})
-	if err != nil {
-		return err
-	}
-
-	return fs.updateTree(resp.Tree.GetSHA())
-}
-
 // RemoveAll removes a directory path and any children it contains. It
 // does not fail if the path does not exist (return nil).
 func (fs *githubFs) RemoveAll(path string) error {
@@ -221,7 +222,7 @@ func (fs *githubFs) Chtimes(name string, atime time.Time, mtime time.Time) error
 }
 
 func main() {
-	githubToken := "992050519c0e6e01d97be157b0c1214b094591a2"
+	githubToken := "fb2904f686b468637f5ce3779868351d217b9073"
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: githubToken},
@@ -230,13 +231,14 @@ func main() {
 
 	client := github.NewClient(tc)
 
-	fs, err := newGitHubFs(client, "darksidergod", "R4B", "master")
+	fs, err := newGithubfs(client, "darksidergod", "Network-Config", "master")
 	if err != nil {
 		panic(err)
 	}
 	//info, _ := afero.ReadDir(fs, "/")
-	data, _ := afero.ReadFile(fs, "/backdoor/dark_backdoor.py")
-	os.Stdout.Write(data)
-
-	//fmt.Printf("%# v", pretty.Formatter(info))
+	//err = fs.Remove("/base.yaml")
+	//data, _ := afero.ReadFile(fs, "/base.yaml")
+	//os.Stdout.Write(data)
+	err = fs.Remove("base.yaml")
+	fmt.Printf("%# v", pretty.Formatter(err))
 }
