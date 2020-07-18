@@ -243,7 +243,7 @@ func (fs *githubFs) Rename(oldname, newname string) error {
 		e.Size = nil
 		entries = append(entries, e)
 	}
-	tree, _, err := fs.client.Git.CreateTree(context.TODO(), fs.user, fs.repo, fs.tree.GetSHA(), entries)
+	tree, _, err := fs.client.Git.CreateTree(context.TODO(), fs.user, fs.repo, "", entries)
 	err = fs.updateTree(tree.GetSHA())
 	if err != nil {
 		return err
@@ -280,6 +280,7 @@ func (fs *githubFs) Name() string {
 
 //Chmod changes the mode of the named file to mode.
 func (fs *githubFs) Chmod(name string, mode os.FileMode) error {
+	// Not required as per our functionality.
 	return nil
 }
 
@@ -289,7 +290,7 @@ func (fs *githubFs) Chtimes(name string, atime time.Time, mtime time.Time) error
 }
 
 func main() {
-	githubToken := "9a7f5b5818d0dc4a0a0c5de616caa0984c61ef76"
+	githubToken := "11ddc8caef2a0a84649dcf3b6ca2db4f4b1d9b0b"
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: githubToken},
@@ -307,6 +308,6 @@ func main() {
 	//data, _ := afero.ReadFile(fs, "/core.yaml")
 	//os.Stdout.Write(data)
 	//err = fs.RemoveAll("/channel-artifacts")
-	err = fs.Rename("/configtx.yaml", "/configtx.txt")
+	err = fs.Rename("/configtx.txt", "/configtx.yaml")
 	fmt.Printf("%# v", pretty.Formatter(err))
 }
