@@ -1,6 +1,6 @@
 package main
 
-// 1.22.44
+// 52.44
 import (
 	"context"
 	"encoding/base64"
@@ -18,12 +18,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// 31.31
+// 1.33
 const commitMessage string = "automatic commit"
 
 type githubDir struct {
 	tree *github.Tree
-
 	mem.DirMap
 }
 
@@ -132,12 +131,15 @@ func (fs *githubFs) Open(name string) (afero.File, error) {
 
 	return mem.NewFileHandle(dir), nil
 }
-
-// Remove removes a file identified by name, returning an error, if any
-// happens.
 func (fs *githubFs) Remove(name string) error {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
+	return fs.remove(name)
+}
+
+// Remove removes a file identified by name, returning an error, if any
+// happens.
+func (fs *githubFs) remove(name string) error {
 	normalName := strings.TrimPrefix(name, "/")
 	entry := fs.findEntry(name)
 	if entry == nil {
@@ -153,6 +155,34 @@ func (fs *githubFs) Remove(name string) error {
 	}
 
 	return fs.updateTree(resp.Tree.GetSHA())
+}
+
+// RemoveAll removes a directory path and any children it contains. It
+// does not fail if the path does not exist (return nil).
+func (fs *githubFs) RemoveAll(path string) error {
+	fs.mu.Lock()
+	defer fs.mu.Unlock()
+	normalName := strings.TrimSuffix(strings.TrimPrefix(path, "/"), "/")
+	entry := fs.findEntry(path)
+	if entry == nil {
+		return afero.ErrFileNotFound
+	}
+	if entry.GetType() == "blob" {
+		return fs.Remove(path)
+	}
+
+	for _, e := range fs.tree.Entries {
+		if e.GetType() == "tree" {
+			continue
+		}
+		if strings.HasPrefix(e.GetPath(), normalName+"/") {
+			err := fs.remove(e.GetPath())
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (fs *githubFs) Create(name string) (afero.File, error) {
@@ -189,21 +219,58 @@ func (fs *githubFs) OpenFile(name string, flag int, perm os.FileMode) (afero.Fil
 	return nil, nil
 }
 
-// RemoveAll removes a directory path and any children it contains. It
-// does not fail if the path does not exist (return nil).
-func (fs *githubFs) RemoveAll(path string) error {
-	return nil
-}
-
 // Rename renames a file.
 func (fs *githubFs) Rename(oldname, newname string) error {
+	fs.mu.Lock()
+	defer fs.mu.Unlock()
+	normalOld := strings.TrimPrefix(oldname, "/")
+	normalNew := strings.TrimPrefix(newname, "/")
+	b, _, err := fs.client.Repositories.GetBranch(context.TODO(), fs.user, fs.repo, fs.branch)
+	if err != nil {
+		return err
+	}
+	err = fs.updateTree(b.Commit.Commit.Tree.GetSHA())
+	if err != nil {
+		return err
+	}
+	var entries []*github.TreeEntry
+	for _, e := range fs.tree.Entries {
+		if e.GetPath() == normalOld {
+			e.Path = convstring(normalNew)
+		}
+		e.Content = nil
+		e.URL = nil
+		e.Size = nil
+		entries = append(entries, e)
+	}
+	tree, _, err := fs.client.Git.CreateTree(context.TODO(), fs.user, fs.repo, fs.tree.GetSHA(), entries)
+	err = fs.updateTree(tree.GetSHA())
+	if err != nil {
+		return err
+	}
+
+	commit, _, err := fs.client.Git.CreateCommit(context.TODO(), fs.user, fs.repo, &github.Commit{
+		Message: convstring(commitmsg),
+		Tree:    tree,
+		Parents: []*github.Commit{{SHA: b.GetCommit().SHA}},
+	})
+	_, _, err = fs.client.Git.UpdateRef(context.TODO(), fs.user, fs.repo, &github.Reference{
+		Ref: convstring("heads/" + b.GetName()),
+		Object: &github.GitObject{
+			SHA: commit.SHA,
+		},
+	}, false)
 	return nil
 }
 
 // Stat returns a FileInfo describing the named file, or an error, if any
 // happens.
 func (fs *githubFs) Stat(name string) (os.FileInfo, error) {
-	return nil, nil
+	f, err := fs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	return f.Stat()
 }
 
 // The name of this FileSystem
@@ -222,7 +289,7 @@ func (fs *githubFs) Chtimes(name string, atime time.Time, mtime time.Time) error
 }
 
 func main() {
-	githubToken := "fb2904f686b468637f5ce3779868351d217b9073"
+	githubToken := "9a7f5b5818d0dc4a0a0c5de616caa0984c61ef76"
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: githubToken},
@@ -231,14 +298,15 @@ func main() {
 
 	client := github.NewClient(tc)
 
-	fs, err := newGithubfs(client, "darksidergod", "Network-Config", "master")
+	fs, err := newGithubfs(client, "darksidergod", "githubfs-test", "master")
 	if err != nil {
 		panic(err)
 	}
 	//info, _ := afero.ReadDir(fs, "/")
 	//err = fs.Remove("/base.yaml")
-	//data, _ := afero.ReadFile(fs, "/base.yaml")
+	//data, _ := afero.ReadFile(fs, "/core.yaml")
 	//os.Stdout.Write(data)
-	err = fs.Remove("base.yaml")
+	//err = fs.RemoveAll("/channel-artifacts")
+	err = fs.Rename("/configtx.yaml", "/configtx.txt")
 	fmt.Printf("%# v", pretty.Formatter(err))
 }
