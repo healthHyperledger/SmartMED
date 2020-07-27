@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/darksidergod/githubfs-test"
 	"github.com/google/go-github/github"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	githubToken := "8480ffea13811da3e717c2ff996e5c6c8c587c66"
+	githubToken := "5a55cf8ede14add10195364f3daf62e8e9944ba5"
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: githubToken},
@@ -19,23 +20,20 @@ func main() {
 
 	client := github.NewClient(tc)
 
-	fs, err := githubfs.NewGithubfs(client, "darksidergod", "githubfs-test", "master")
+	fs, err := githubfs.NewGithubfs(client, "darksidergod", "Security-Utils.", "master")
 	if err != nil {
 		panic(err)
 	}
-	err = fs.MkdirAll("test/foo", 0700)
+
+	f, err := fs.OpenFile("dark", os.O_APPEND, 0644)
 	if err != nil {
-		log.Fatal("mkdir", err)
+		log.Fatal(err)
 	}
-	_, err = fs.Create("test/foo/bar")
+
+	f.Write([]byte("Hello World."))
+	err = f.Close()
 	if err != nil {
-		log.Fatal("create", err)
+		log.Fatal(err)
 	}
-	//info, _ := afero.ReadDir(fs, "/")
-	//err = fs.Remove("/base.yaml")
-	//data, _ := afero.ReadFile(fs, "/core.yaml")
-	//os.Stdout.Write(data)
-	//err = fs.RemoveAll("/channel-artifacts")
-	//err = fs.Rename("/configtx.txt", "/configtx.yaml")
-	//fmt.Printf("%# v", pretty.Formatter(err))
+	//fmt.Printf("%# v", pretty.Formatter(fs))
 }
