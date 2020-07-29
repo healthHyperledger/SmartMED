@@ -43,11 +43,10 @@ func (clientdid *mycc) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		return clientdid.ReadAttributesOfCaller(stub)
 
 	} else if funcName == "ApproveRead" {
-		// To be coded in an exercise
-		// return clientdid.ApproveTrade(stub, args)
+		return peer.Response{}
 	}
 
-	return shim.Error("Bad Func Name!!!")
+	return shim.Error("Wrong function call.")
 }
 
 // ReadAttributesOfCaller reads the attributes of the callers cert and return it as JSON
