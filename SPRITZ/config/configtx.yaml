@@ -36,7 +36,7 @@ Organizations:
   - &Healthcare
     Name: Healthcare
     ID: HealthcareMSP
-    MSPDir: ./../ca/client/healthcare/msp
+    MSPDir: ./../ca/client/acme/msp
     Policies: &AcmePolicies
       Readers:
           Type: Signature

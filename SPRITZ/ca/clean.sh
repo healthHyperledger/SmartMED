@@ -18,7 +18,7 @@ fi
 
 rm -rf ./client/msp
 
-# Delete files generated in the ca folder (by mistke :)
+# Delete files generated in the ca folder (by mistake :)
 rm ./server/*.db     2> /dev/null
 rm ./server/Issuer*  2> /dev/null
 rm ./server/*.pem    2> /dev/null

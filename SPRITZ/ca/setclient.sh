@@ -1,16 +1,30 @@
-# Sets the home folder for the client
-# fabric-ca-client looks for this environment vars 
+# Sets the FABRIC_CA_CLIENT_HOME based on (a) org (b) enrollment ID
+
 function usage {
-    echo 'To switch the client user folder'
-    echo 'Usage:   ./setclientuser.sh  <user  default=admin> '
+    echo    "Usage:    .   ./setclient.sh   ORG-Name   Enrollment-ID"
+
+    echo "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME"
 }
 
-if [ -z "$1" ];
+if [ -z $1 ];
 then
-    USER="admin"
-else
-    USER=$1
+    usage
+    echo   "To CHANGE please provide ORG-Name & enrollment ID"
+    exit 1
 fi
 
-export FABRIC_CA_CLIENT_HOME=`pwd`/client/$USER
+if [ -z $2 ];
+then
+    usage
+    echo   "Please provide enrollment ID"
+    exit 1
+fi
+
+export FABRIC_CA_CLIENT_HOME=`pwd`/client/$1/$2
 echo "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME"
+
+if [ "$0" = "./setclient.sh" ]
+then
+    echo "Did you use the . before ./setclient.sh? If yes then we are good :)"
+fi
+

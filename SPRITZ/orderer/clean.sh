@@ -24,7 +24,7 @@ then
     rm *.block 2> /dev/null
     rm *.tx 2> /dev/null
     rm -rf crypto-config 2> /dev/null
-    # rm *.yaml   2> /dev/null
+    rm *.yaml   2> /dev/null
     
     echo 'Deleted all artifacts.'
 else

@@ -18,7 +18,7 @@ crlsizelimit: 512000
 #############################################################################
 ca:
   # Unique Name (across the network) of this CA
-  name: acme-ca
+  name: spritz-ca
   # Key file (is only used to import a private key into BCCSP)
   keyfile:
   # Certificate file (default: ca-cert.pem)
