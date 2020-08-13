@@ -1,0 +1,53 @@
+[33m2020-08-13 11:47:43.067 UTC [main] InitCmd -> WARN 001[0m CORE_LOGGING_LEVEL is no longer supported, please use the FABRIC_LOGGING_SPEC environment variable
+[34m2020-08-13 11:47:43.072 UTC [nodeCmd] serve -> INFO 002[0m Starting peer:
+ Version: 2.1.0
+ Commit SHA: 1bdf97537
+ Go version: go1.14.1
+ OS/Arch: linux/amd64
+ Chaincode:
+  Base Docker Label: org.hyperledger.fabric
+  Docker Namespace: hyperledger
+[34m2020-08-13 11:47:43.072 UTC [peer] getLocalAddress -> INFO 003[0m Auto-detected peer address: 10.0.2.15:8051
+[34m2020-08-13 11:47:43.072 UTC [peer] getLocalAddress -> INFO 004[0m Returning localhost:8051
+[34m2020-08-13 11:47:43.085 UTC [ledgermgmt] NewLedgerMgr -> INFO 005[0m Initializing LedgerMgr
+[34m2020-08-13 11:47:43.158 UTC [leveldbhelper] openDBAndCheckFormat -> INFO 006[0m DB is empty Setting db format as 2.0
+[34m2020-08-13 11:47:43.164 UTC [fsblkstorage] NewProvider -> INFO 007[0m Creating new file ledger directory at /var/ledgers/multi-org-ca/acme/peer2/ledger/ledgersData/chains/chains
+[34m2020-08-13 11:47:43.205 UTC [leveldbhelper] openDBAndCheckFormat -> INFO 008[0m DB is empty Setting db format as 2.0
+[34m2020-08-13 11:47:43.279 UTC [leveldbhelper] openDBAndCheckFormat -> INFO 009[0m DB is empty Setting db format as 2.0
+[34m2020-08-13 11:47:43.292 UTC [ledgermgmt] NewLedgerMgr -> INFO 00a[0m Initialized LedgerMgr
+[34m2020-08-13 11:47:43.326 UTC [gossip.service] New -> INFO 00b[0m Initialize gossip with endpoint localhost:8051
+[34m2020-08-13 11:47:43.329 UTC [gossip.gossip] New -> INFO 00c[0m Creating gossip service with self membership of Endpoint: , InternalEndpoint: localhost:8051, PKI-ID: f96d87247511d5ed620e532b717660328f632787ffab41e128490114a3583a7f, Metadata: 
+[33m2020-08-13 11:47:43.331 UTC [gossip.gossip] New -> WARN 00d[0m External endpoint is empty, peer will not be accessible outside of its organization
+[34m2020-08-13 11:47:43.332 UTC [lifecycle] InitializeLocalChaincodes -> INFO 00e[0m Initialized lifecycle cache with 0 already installed chaincodes
+[34m2020-08-13 11:47:43.335 UTC [nodeCmd] computeChaincodeEndpoint -> INFO 00f[0m Entering computeChaincodeEndpoint with peerHostname: localhost
+[34m2020-08-13 11:47:43.335 UTC [nodeCmd] computeChaincodeEndpoint -> INFO 010[0m Exit with ccEndpoint: localhost:8052
+[34m2020-08-13 11:47:43.344 UTC [gossip.gossip] start -> INFO 011[0m Gossip instance localhost:8051 started
+[34m2020-08-13 11:47:43.351 UTC [sccapi] DeploySysCC -> INFO 012[0m deploying system chaincode 'lscc'
+[34m2020-08-13 11:47:43.357 UTC [sccapi] DeploySysCC -> INFO 013[0m deploying system chaincode 'cscc'
+[34m2020-08-13 11:47:43.357 UTC [sccapi] DeploySysCC -> INFO 014[0m deploying system chaincode 'qscc'
+[34m2020-08-13 11:47:43.358 UTC [sccapi] DeploySysCC -> INFO 015[0m deploying system chaincode '_lifecycle'
+[34m2020-08-13 11:47:43.358 UTC [nodeCmd] serve -> INFO 016[0m Deployed system chaincodes
+[34m2020-08-13 11:47:43.358 UTC [discovery] NewService -> INFO 017[0m Created with config TLS: false, authCacheMaxSize: 1000, authCachePurgeRatio: 0.750000
+[34m2020-08-13 11:47:43.358 UTC [nodeCmd] registerDiscoveryService -> INFO 018[0m Discovery service activated
+[34m2020-08-13 11:47:43.358 UTC [nodeCmd] serve -> INFO 019[0m Starting peer with ID=[peer2], network ID=[dev], address=[localhost:8051]
+[34m2020-08-13 11:47:43.359 UTC [nodeCmd] serve -> INFO 01a[0m Started peer with ID=[peer2], network ID=[dev], address=[localhost:8051]
+[34m2020-08-13 11:47:43.359 UTC [kvledger] LoadPreResetHeight -> INFO 01b[0m Loading prereset height from path [/var/ledgers/multi-org-ca/acme/peer2/ledger/ledgersData/chains]
+[34m2020-08-13 11:47:43.359 UTC [fsblkstorage] preResetHtFiles -> INFO 01c[0m No active channels passed
+[34m2020-08-13 11:49:41.625 UTC [ledgermgmt] CreateLedger -> INFO 01d[0m Creating ledger [airlinechannel] with genesis block
+[34m2020-08-13 11:49:41.653 UTC [fsblkstorage] newBlockfileMgr -> INFO 01e[0m Getting block information from block storage
+[34m2020-08-13 11:49:41.674 UTC [kvledger] CommitLegacy -> INFO 01f[0m [airlinechannel] Committed block [0] with 1 transaction(s) in 14ms (state_validation=0ms block_and_pvtdata_commit=4ms state_commit=2ms) commitHash=[]
+[34m2020-08-13 11:49:41.683 UTC [ledgermgmt] CreateLedger -> INFO 020[0m Created ledger [airlinechannel] with genesis block
+[34m2020-08-13 11:49:41.684 UTC [gossip.gossip] JoinChan -> INFO 021[0m Joining gossip network of channel airlinechannel with 1 organizations
+[34m2020-08-13 11:49:41.684 UTC [gossip.gossip] learnAnchorPeers -> INFO 022[0m No configured anchor peers of AcmeMSP for channel airlinechannel to learn about
+[34m2020-08-13 11:49:41.686 UTC [gossip.state] NewGossipStateProvider -> INFO 023[0m Updating metadata information for channel airlinechannel, current ledger sequence is at = 0, next expected block is = 1
+[34m2020-08-13 11:49:41.686 UTC [endorser] callChaincode -> INFO 024[0m finished chaincode: cscc duration: 62ms channel= txID=cbfe6c44
+[34m2020-08-13 11:49:41.686 UTC [comm.grpc.server] 1 -> INFO 025[0m unary call completed grpc.service=protos.Endorser grpc.method=ProcessProposal grpc.peer_address=127.0.0.1:42754 grpc.code=OK grpc.call_duration=63.890953ms
+[34m2020-08-13 11:49:46.684 UTC [gossip.channel] reportMembershipChanges -> INFO 026[0m [[airlinechannel] Membership view has changed. peers went online:  [[ localhost:7051]] , current view:  [[ localhost:7051]]]
+[34m2020-08-13 11:49:47.687 UTC [gossip.election] beLeader -> INFO 027[0m f96d87247511d5ed620e532b717660328f632787ffab41e128490114a3583a7f : Becoming a leader
+[34m2020-08-13 11:49:47.687 UTC [gossip.service] func1 -> INFO 028[0m Elected as a leader, starting delivery service for channel airlinechannel
+[34m2020-08-13 11:49:47.688 UTC [deliveryClient] StartDeliverForChannel -> INFO 029[0m This peer will retrieve blocks from ordering service and disseminate to other peers in the organization for channel airlinechannel
+[34m2020-08-13 11:49:47.703 UTC [gossip.election] stopBeingLeader -> INFO 02a[0m f96d87247511d5ed620e532b717660328f632787ffab41e128490114a3583a7f Stopped being a leader
+[34m2020-08-13 11:49:47.703 UTC [gossip.service] func1 -> INFO 02b[0m Renounced leadership, stopping delivery service for channel airlinechannel
+[33m2020-08-13 11:49:47.704 UTC [peer.blocksprovider] func1 -> WARN 02c[0m Encountered an error reading from deliver stream: rpc error: code = Canceled desc = context canceled channel=airlinechannel orderer-address=localhost:7050
+[34m2020-08-13 11:49:48.180 UTC [endorser] callChaincode -> INFO 02d[0m finished chaincode: cscc duration: 0ms channel= txID=7a0f2c25
+[34m2020-08-13 11:49:48.180 UTC [comm.grpc.server] 1 -> INFO 02e[0m unary call completed grpc.service=protos.Endorser grpc.method=ProcessProposal grpc.peer_address=127.0.0.1:42762 grpc.code=OK grpc.call_duration=598.321µs
