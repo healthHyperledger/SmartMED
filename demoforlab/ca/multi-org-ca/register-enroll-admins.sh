@@ -40,7 +40,6 @@ function enrollAdmins {
     source setclient.sh   $ORG_NAME   admin
     checkCopyYAML
     fabric-ca-client enroll -u http://acme-admin:pw@localhost:7054
-
     setupMSP
 
     # 2. budget-admin
@@ -50,7 +49,6 @@ function enrollAdmins {
     source setclient.sh   $ORG_NAME   admin
     checkCopyYAML
     fabric-ca-client enroll -u http://budget-admin:pw@localhost:7054
-
     setupMSP
 
     # 3. orderer-admin
@@ -60,7 +58,6 @@ function enrollAdmins {
     source setclient.sh   $ORG_NAME   admin
     checkCopyYAML
     fabric-ca-client enroll -u http://orderer-admin:pw@localhost:7054
-
     setupMSP
 }
 

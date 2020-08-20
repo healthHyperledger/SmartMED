@@ -36,7 +36,7 @@ sudo -E mkdir -p $CORE_PEER_FILESYSTEMPATH
 mkdir -p $PEER_LOGS
 
 # Start the peer
-sudo -E peer node start 2> $PEER_LOGS/peer.log &
+sudo -E peer node start #2> $PEER_LOGS/peer.log &
 
 echo "====>PLEASE Check Peer Log under  $PWD/$ORG_NAME/$PEER_NAME"
 echo "====>Make sure there are no errors!!!"

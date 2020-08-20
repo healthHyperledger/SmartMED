@@ -5,7 +5,6 @@ sudo killall orderer
 rm *.tx 2> /dev/null
 rm *.block 2> /dev/null
 
-
 sudo rm -rf $HOME/ledgers/orderer/multi-org-ca/ledger  2> /dev/null
 sudo rm -rf $HOME/ledgers/multi-org-ca/orderer/ledger  2> /dev/null
 
