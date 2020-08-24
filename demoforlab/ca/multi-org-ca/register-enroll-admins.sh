@@ -7,15 +7,15 @@ function registerAdmins {
     # 1. Set the CA Server Admin as FABRIC_CA_CLIENT_HOME
     source setclient.sh   caserver   admin
 
-    # 2. Register acme-admin
+    # 2. Register healthcare-admin
     echo "Registering: healthcare-admin"
     ATTRIBUTES='"hf.Registrar.Roles=peer,user,client","hf.AffiliationMgr=true","hf.Revoker=true"'
-    fabric-ca-client register --id.type client --id.name acme-admin --id.secret pw --id.affiliation acme --id.attrs $ATTRIBUTES --id.attrs hf.Registrar.Attributes="*"
+    fabric-ca-client register --id.type client --id.name healthcare-admin --id.secret pw --id.affiliation healthcare --id.attrs $ATTRIBUTES --id.attrs hf.Registrar.Attributes="*"
 
-    # 3. Register budget-admin
+    # 3. Register research-admin
     echo "Registering: research-admin"
     ATTRIBUTES='"hf.Registrar.Roles=peer,user,client","hf.AffiliationMgr=true","hf.Revoker=true"'
-    fabric-ca-client register --id.type client --id.name budget-admin --id.secret pw --id.affiliation budget --id.attrs $ATTRIBUTES
+    fabric-ca-client register --id.type client --id.name research-admin --id.secret pw --id.affiliation budget --id.attrs $ATTRIBUTES
 
     # 4. Register orderer-admin
     echo "Registering: orderer-admin"
@@ -27,28 +27,28 @@ function registerAdmins {
 function setupMSP {
     mkdir -p $FABRIC_CA_CLIENT_HOME/msp/admincerts
 
-    echo "====> $FABRIC_CA_CLIENT_HOME/msp/admincerts"
+    echo "=> $FABRIC_CA_CLIENT_HOME/msp/admincerts"
     cp $FABRIC_CA_CLIENT_HOME/../../caserver/admin/msp/signcerts/*  $FABRIC_CA_CLIENT_HOME/msp/admincerts
 }
 
 # Enroll admin
 function enrollAdmins {
     # 1. acme-admin
-    echo "Enrolling: acme-admin"
+    echo "Enrolling: healthcare-admin"
 
-    ORG_NAME="acme"
+    ORG_NAME="healthcare"
     source setclient.sh   $ORG_NAME   admin
     checkCopyYAML
-    fabric-ca-client enroll -u http://acme-admin:pw@localhost:7054
+    fabric-ca-client enroll -u http://healthcare-admin:pw@localhost:7054
     setupMSP
 
     # 2. budget-admin
-    echo "Enrolling: budget-admin"
+    echo "Enrolling: research-admin"
 
-    ORG_NAME="budget"
+    ORG_NAME="research"
     source setclient.sh   $ORG_NAME   admin
     checkCopyYAML
-    fabric-ca-client enroll -u http://budget-admin:pw@localhost:7054
+    fabric-ca-client enroll -u http://research-admin:pw@localhost:7054
     setupMSP
 
     # 3. orderer-admin
@@ -75,8 +75,8 @@ function    checkCopyYAML {
     fi
 }
 
-echo "========= Registering ==============="
+echo " Registering.."
 registerAdmins
-echo "========= Enrolling ==============="
+echo "Enrolling.."
 enrollAdmins
-echo "==================================="
+echo "Done :)"

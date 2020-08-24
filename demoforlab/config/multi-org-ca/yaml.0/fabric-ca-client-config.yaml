@@ -46,7 +46,7 @@ csr:
       O:  Acme
       OU: "Security"
   hosts:
-    - acme.com
+    - healthcare.com
     - localhost
 
 #############################################################################
@@ -58,7 +58,7 @@ id:
   # By default the type is set to be user
   type: user
   # Default org is acme - make sure the org is set up in CA server :-)
-  affiliation: acme
+  affiliation: healthcare
   # Set to max of 2
   maxenrollments: 2
   # Adds a custom attribute

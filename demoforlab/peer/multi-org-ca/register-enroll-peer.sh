@@ -28,7 +28,7 @@ fi
 
 # Function checks for the availability of the 
 function    checkCopyYAML {
-    SETUP_CONFIG_CLIENT_YAML="../../setup/config/multi-org-ca/yaml.0/identities/$ORG_NAME/$PEER_NAME/fabric-ca-client-config.yaml"
+    SETUP_CONFIG_CLIENT_YAML="../../config/multi-org-ca/yaml.0/identities/$ORG_NAME/$PEER_NAME/fabric-ca-client-config.yaml"
     # Placeholder
     # This is not implemented - but is placed here to show how you can manage the CSR for the peers like other identities
 }

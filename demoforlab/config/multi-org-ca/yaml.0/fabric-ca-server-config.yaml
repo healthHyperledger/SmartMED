@@ -9,7 +9,7 @@
 port: 7054
 
 # Enables debug logging (default: false)
-debug: false
+debug: true
 
 # Size limit of an acceptable CRL in bytes (default: 512000)
 crlsizelimit: 512000
@@ -18,7 +18,7 @@ crlsizelimit: 512000
 #############################################################################
 ca:
   # Unique Name (across the network) of this CA
-  name: acme-ca
+  name: healthcare-ca
   # Key file (is only used to import a private key into BCCSP)
   keyfile:
   # Certificate file (default: ca-cert.pem)
@@ -29,14 +29,14 @@ ca:
 # Affiliations are hierarchical in nature. 
 #############################################################################
 affiliations:
-   acme:
-      - logistics
-      - accounting
-      - b2b
+   healthcare:
+      - patient
+      - staff
+      - requestors
    orderer:
       - support
-   budget:
-      - b2b
+   research:
+      - gradeA
 #############################################################################
 #  Used for ID registry setup
 #############################################################################
@@ -65,7 +65,7 @@ registry:
 #  This controls the creation of the root CA certificate.
 ###########################################################################
 csr:
-   cn: Acme-CA
+   cn: Healthcare-CA
    names:
       - C: US
         ST: "New York"
@@ -73,7 +73,7 @@ csr:
         O: Acme
         OU: B2B
    hosts:
-     - acme.com
+     - healthcare.com
      - localhost
    ca:
       expiry: 131400h

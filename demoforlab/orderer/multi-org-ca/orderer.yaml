@@ -9,7 +9,7 @@ General:
     BootstrapMethod: file
 
     # Used to be "GenesisFile: ./acme-genesis.block" in Fabric 1.x
-    BootstrapFile: ./airline-genesis.block
+    BootstrapFile: ./healthcare-genesis.block
 
     # BCCSP Setup
     BCCSP:

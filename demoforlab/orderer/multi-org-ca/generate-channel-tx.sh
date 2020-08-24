@@ -6,13 +6,10 @@ export FABRIC_CFG_PATH=$PWD
 
 function usage {
     echo "./generate-channel-tx.sh "
-    echo "     Creates the airline-channel.tx for the channel airlinechannel"
+    echo "     Creates the channel.tx for the channel healthcarechannel"
 }
 
-echo    '================ Writing airlinechannel ================'
+echo    'Writing application channel with channelID healthcarechannel..'
+configtxgen -profile HealthcareChannel -outputCreateChannelTx ./healthcare-channel.tx -channelID healthcarechannel
+echo    'Launching orderer using the launch script. :)'
 
-configtxgen -profile AirlineChannel -outputCreateChannelTx ./airline-channel.tx -channelID airlinechannel
-
-
-
-echo    '======= Done. Launch by executing orderer ======'

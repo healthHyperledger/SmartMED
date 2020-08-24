@@ -33,27 +33,27 @@ Organizations:
           Type: Signature
           Rule: "OR('OrdererMSP.member')"
 
-  - &Acme
-    Name: Acme
-    ID: AcmeMSP
-    MSPDir: ../../ca/multi-org-ca/client/acme/msp
+  - &Healthcare
+    Name: Healthcare
+    ID: HealthcareMSP
+    MSPDir: ../../ca/multi-org-ca/client/healthcare/msp
     Policies: &AcmePolicies
       Readers:
           Type: Signature
           # Any member can READ e.g., query
-          Rule: "OR('AcmeMSP.member')"
+          Rule: "OR('HealthcareMSP.member')"
       Writers:
           Type: Signature
           # Any member can WRITE e.g., submit transaction
-          Rule: "OR('AcmeMSP.member')"
+          Rule: "OR('HealthcareMSP.member')"
       Admins:
           Type: Signature
           # Either Acme admin OR Orderer Admin can carry out admin activities
-          Rule: "OR('AcmeMSP.admin','OrdererMSP.admin')"
+          Rule: "OR('HealthcareMSP.admin','OrdererMSP.admin')"
       Endorsement:
           Type: Signature
           # Any member can act as an endorser
-          Rule: "OR('AcmeMSP.member')"
+          Rule: "OR('HealthcareMSP.member')"
     AnchorPeers:
       - Host: peer1.acme.com
         Port: 7051
@@ -223,7 +223,7 @@ Channel: &ChannelDefaults
 #   PROFILES
 Profiles:
 
-  AirlineOrdererGenesis:
+  OrdererGenesis:
       <<: *ChannelDefaults
       Orderer:
           <<: *OrdererDefaults
@@ -232,20 +232,20 @@ Profiles:
       Consortiums:
         AirlineConsortium:
             Organizations:
-                  - <<: *Acme
+                  - <<: *Healthcare
                   
       Application:
             <<: *ApplicationDefaults
 
             Organizations:
-                - <<: *Acme
+                - <<: *Healthcare
                 
                  
 
       
                                 
                   
-  AirlineChannel:
+  HealthcareChannel:
     <<: *ChannelDefaults
     Consortium: AirlineConsortium
         
@@ -253,7 +253,7 @@ Profiles:
         <<: *ApplicationDefaults
         
         Organizations:
-            - <<: *Acme
+            - <<: *Healthcare
             
         
 

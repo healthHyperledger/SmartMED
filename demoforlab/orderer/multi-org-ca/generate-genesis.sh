@@ -4,5 +4,5 @@ export FABRIC_LOGGING_SPEC=INFO
 export FABRIC_CFG_PATH=$PWD
 
 # Create the Genesis Block
-echo    '================ Writing Genesis Block ================'
-configtxgen -profile AirlineOrdererGenesis -outputBlock ./airline-genesis.block -channelID ordererchannel
+echo    'Writing Genesis Block..'
+configtxgen -profile OrdererGenesis -outputBlock ./healthcare-genesis.block -channelID ordererchannel
