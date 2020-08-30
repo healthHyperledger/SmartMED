@@ -19,7 +19,7 @@ peer:
 
     # The Address at local network interface this Peer will listen on.
     # By default, it will listen on all network interfaces
-    listenAddress: 0.0.0.0:7051
+    listenAddress: 0.0.0.0:7777
 
     # The endpoint this peer uses to listen for inbound chaincode connections.
     # If this is commented-out, the listen address is selected to be
@@ -36,7 +36,7 @@ peer:
     # in the same organization. For peers in other organization, see
     # gossip.externalEndpoint for more info.
     # When used as CLI config, this means the peer's endpoint to interact with
-    address: 0.0.0.0:7051
+    address: 0.0.0.0:7777
 
     # Whether the Peer should programmatically determine its address
     # This case is useful for docker containers.
@@ -286,7 +286,7 @@ peer:
     # CLI common client config options
     client:
         # connection timeout
-        connTimeout: 3s
+        connTimeout: 10s
 
     # Delivery service related config
     deliveryclient:
@@ -509,13 +509,13 @@ chaincode:
     # build the image, which might take more time. In production environment,
     # the chaincode image is unlikely to be deleted, so the timeout could be
     # reduced accordingly.
-    executetimeout: 30s
+    executetimeout: 300s
 
     # There are 2 modes: "dev" and "net".
     # In dev mode, user runs the chaincode after starting peer from
     # command line on local machine.
     # In net mode, peer will run chaincode in a docker container.
-    mode: dev
+    mode: net
 
     # keepalive in seconds. In situations where the communication goes through a
     # proxy that does not support keep-alive, this parameter will maintain connection

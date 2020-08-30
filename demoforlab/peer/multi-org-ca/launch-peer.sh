@@ -7,7 +7,7 @@ function usage {
 if [ -z $1 ];
 then
     usage
-    echo "Please provide the ORG Name!!!"
+    echo "Please provide the org name."
     exit 0
 else
     ORG_NAME=$1
@@ -17,7 +17,7 @@ fi
 if [ -z $2 ];
 then
     usage
-    echo  "Please specify PEER_NAME!!!"
+    echo  "Please specify peer name."
     exit 0
 else 
     PEER_NAME=$2
