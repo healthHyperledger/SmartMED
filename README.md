@@ -11,7 +11,8 @@
 
 ## Installation
 
-- Download the vagrant environment `https://drive.google.com/file/d/1VEA_GMVkFieWBnGa8zVvSfcCO5VVnngc/view?usp=sharing`.
+- Download the vagrant environment `https://drive.google.com/file/d/1VEA_GMVkFieWBnGa8zVvSfcCO5VVnngc/view?usp=sharing` and extract the file to obtain the vagrant
+  machine directory.
 - Navigate to the directory and run `vagrant up`.
 - After the VM is up, run `vagrant ssh`, this will connect your terminal to the Ubuntu VM via CLI that we will be using for 
   interacting with our environment. (Keep atleast 4 terminals open).
