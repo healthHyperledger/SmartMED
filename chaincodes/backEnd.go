@@ -7,6 +7,7 @@ import (
 
 	"github.com/darksidergod/githubfs-test"
 	"github.com/google/go-github/github"
+	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/spf13/afero"
@@ -15,7 +16,7 @@ import (
 
 type mycc struct{}
 
-var m map[string]string
+var m = make(map[string]string)
 
 // Init Implements the Init method
 func (clientdid *mycc) Init(stub shim.ChaincodeStubInterface) peer.Response {
@@ -32,13 +33,20 @@ func (clientdid *mycc) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	} else if funcName == "write" {
 		return clientdid.write(stub, args[0], args[1])
 	} else if funcName == "add" {
-		return adminOnly(stub, args[0], args[1])
+		return clientdid.add(stub, args[0], args[1])
 	}
 	return shim.Error(("Bad Function Name = " + funcName + "!"))
 }
-func (clientdid *mycc) add(patientID string, pathSource string) peer.Response {
-	m[patientID] = pathSource
-	return shim.Success([]byte("added path"))
+func (clientdid *mycc) add(stub shim.ChaincodeStubInterface, key string, value string) peer.Response {
+	enrollID, _, err := cid.GetAttributeValue(stub, "hf.EnrollmentID")
+	if err != nil {
+		return shim.Error("error occured while getting the enrollment ID.")
+	}
+	if enrollID != "healthcare-admin" {
+		return shim.Error("You are not allowed to perform this function.")
+	}
+	m[key] = value
+	return shim.Success([]byte("Added path"))
 }
 func (clientdid *mycc) read(stub shim.ChaincodeStubInterface, patientID string, levelToRead string) peer.Response {
 	githubToken := "GITHUB_ACCESS_TOKEN"
@@ -89,16 +97,13 @@ func (clientdid *mycc) write(stub shim.ChaincodeStubInterface, patientID string,
 	return shim.Success([]byte("Success."))
 }
 
-func adminOnly(stub shim.ChaincodeStubInterface, s1 string, s2 string) peer.Response {
-	m[s1] = s2
-	return shim.Success([]byte("Success."))
-}
-
 // Chaincode registers with the Shim on startup
 func main() {
 	fmt.Printf("Started Chaincode.\n")
+	m["dataOwner1"] = "patient"
 	err := shim.Start(new(mycc))
 	if err != nil {
 		fmt.Printf("Error starting chaincode: %s", err)
 	}
 }
+
