@@ -1,7 +1,7 @@
 Ensure the Crypto is setup using Fabric-CA
 ==========================================
 cd ca/multi-org-ca
-./run-all.sh    
+`./register-enroll-admins.sh`
 This will setup the Admins & Org MSP 
 
 Orderer Setup
