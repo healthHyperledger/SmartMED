@@ -51,4 +51,25 @@ $ ./launch.sh healthcare peer1 7050
 $ . set-env.sh healthcare peer1 7050 admin
 $ ./join-healthcare-channel.sh
 ```
+### Registering a new user
 
+- The CA server must be running in order to register and enroll new identities to the network.
+- Only the healthcare-admin is capable of adding users with the custom attributes that shows association with a user. 
+```shell
+$ cd demoforlab/ca/multi-org-ca/
+$ . setclient.sh healthcare admin
+```
+- Available affiliations : "healthcare.patient", "healthcare.staff", "healthcare.others", "research", "thirdparty".
+```
+$ fabric-ca-client register --id.name <enrollment-ID> --id.type user --id.affiliation <appropriate affiliation> --id.secret <enrollment-secret> --id.attrs <dataOwner#>=<#level>:ecert
+$ . setclient <org-name> <enrollment-ID>
+```
+```
+$ fabric-ca-client enroll -u http://<enrollment-ID>:<enrollment-secret>
+```
+- Example
+```
+$ fabric-ca-client enroll -u http://dataOwner1:pw@localhost:7054
+```
+
+- Here "dataOwner1" is the enrollment-id and "pw" is the enrollment secret.
