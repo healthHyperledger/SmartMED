@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  rca-org2:
+    container_name: rca-org2
+    image: hyperledger/fabric-ca
+    command: /bin/bash -c 'fabric-ca-server start -d -b rca-org2-admin:rca-org2-adminpw --port 7055'
+    environment:
+      - FABRIC_CA_SERVER_HOME=/tmp/hyperledger/fabric-ca/crypto
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_CSR_CN=rca-org2
+      - FABRIC_CA_SERVER_CSR_HOSTS=0.0.0.0
+      - FABRIC_CA_SERVER_DEBUG=true
+    volumes:
+      - ./ca/server:/tmp/hyperledger/fabric-ca
+    ports:
+      - 7055:7055
