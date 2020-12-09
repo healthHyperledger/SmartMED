@@ -1,0 +1,40 @@
+args0: &read-args
+  dataOwner: dataOwner1
+  levelReq: 3
+
+args1: &write-args
+  dataOwner: dataOwner1
+  writeLevel: 5
+
+
+test:
+  name: spritz-test
+  description: >-
+    This is an example benchmark for Caliper, to test the backend DLT's
+    performance with simple account opening & querying transactions.
+  workers:
+    type: local
+    number: 2
+  rounds:
+    - label: read
+      description: Test description for the read operation performance of the deployed contract.
+      txNumber: 10000
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 100
+      workload:
+        module: benchmarks/scenario/spritz/read.js
+        arguments: *read-args
+    - label: write
+      description: Test description for write operation.
+      txNumber: 50
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 5
+      workload:
+        module: benchmarks/scenario/spritz/write.js
+        arguments:
+          << : *write-args
+          
