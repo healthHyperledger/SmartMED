@@ -19,6 +19,8 @@ import (
 type mycc struct {
 }
 
+var m = make(map[string]string)
+
 // Channel Name & name of the chaincode that is to be called.
 const Channel = "healthcarechannel"
 
@@ -133,6 +135,8 @@ func (clientdid *mycc) ApproveWrite(stub shim.ChaincodeStubInterface, writeUser 
 		return shim.Error("You're not authorized.")
 	}
 	stub.PutState(writeUser, []byte("Write Auth."))
+	enrollID, _, _ := cid.GetAttributeValue(stub, "hf.EnrollmentID")
+	m[writeUser] = enrollID
 	response := shim.Success([]byte("Write access granted."))
 	return response
 
@@ -179,6 +183,11 @@ func (clientdid *mycc) writeToRecord(stub shim.ChaincodeStubInterface, dataOwner
 	valueString := string(val)
 	if valueString != "Write Auth." {
 		return shim.Error("No such request was made by the data owner.\n")
+	}
+	// Check added to mitigate the dataReq accessing another dataOwner records.//
+	val2 := m[valueString]
+	if val2 != dataOwner {
+		return shim.Error("Wrong user access requested.")
 	}
 	args := make([][]byte, 3)
 	args[0] = []byte("write")
