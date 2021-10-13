@@ -1,10 +1,7 @@
 # SmartMED
 
 **Dependencies**
-- oracle virtual-box 
-- vagrant
-- vagrantFile for the test-environment
-- visual-studio code
+- virtual machine environment
 - docker
 - fabric binaries
 
